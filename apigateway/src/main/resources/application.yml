@@ -1,0 +1,38 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: stock-service
+          uri: http://localhost:8083
+          predicates:
+            - Path=/data/**
+          filters:
+            - AuthenticationFilter
+
+        - id: wishlist-service
+          uri: http://localhost:8084
+          predicates:
+            - Path=/wishlist/**
+          filters:
+            - AuthenticationFilter
+
+        - id: authentication-service
+          uri: http://localhost:8082
+          predicates:
+            - Path=/auth/**
+
+        - id: userprofile-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/user/**
+
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "http://localhost:3000" # Adjust the origin to match your React app
+            allowedMethods: "GET,POST,PUT,DELETE,OPTIONS"
+            allowedHeaders: "*"
+            allowCredentials: true
+
+
+
