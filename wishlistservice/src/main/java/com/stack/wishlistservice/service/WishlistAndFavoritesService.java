@@ -20,23 +20,20 @@ public class WishlistAndFavoritesService {
         return stocks.stream().map(this::convertToDto).collect(Collectors.toList());
     }
 
-    public void addToList(String username, StockDto stockDto, String type) {
-        List<Stock> existingStocks = stockRepository.findByUsernameAndType(username, type);
-        boolean stockExists = existingStocks.stream().anyMatch(stock ->
-                stock.getSymbol().equals(stockDto.getSymbol()) &&
-                        stock.getName().equals(stockDto.getName()) &&
-                        stock.getCurrency().equals(stockDto.getCurrency()) &&
-                        stock.getExchange().equals(stockDto.getExchange()) &&
-                        stock.getCountry().equals(stockDto.getCountry()));
+    public boolean checkExistence(String username, StockDto stockDto, String type) {
 
-        if (!stockExists) {
-            Stock stock = convertToEntity(stockDto);
-            stock.setUsername(username);
-            stock.setType(type);
-            stockRepository.save(stock);
-        } else {
-            // Optionally handle duplicate scenario, e.g., log a message or throw an exception
-        }
+        List<Stock> existingStocks = stockRepository.findByUsernameAndType(username, type);
+        boolean stockExists = existingStocks.stream().anyMatch(stock -> stock.getSymbol().equals(stockDto.getSymbol()) && stock.getName().equals(stockDto.getName()) && stock.getCurrency().equals(stockDto.getCurrency()) && stock.getExchange().equals(stockDto.getExchange()) && stock.getCountry().equals(stockDto.getCountry()));
+        return stockExists;
+    }
+
+    public void addToList(String username, StockDto stockDto, String type) {
+
+        Stock stock = convertToEntity(stockDto);
+        stock.setUsername(username);
+        stock.setType(type);
+        stockRepository.save(stock);
+
     }
 
     public void removeFromList(String username, String symbol, String type) {
